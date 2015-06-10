@@ -75,8 +75,14 @@ public:
   virtual void report_warning( const std::string& warning );
   virtual void report_message( const std::string& message );
   virtual void report_result( const Core::ActionResultHandle& result );
-  virtual void report_need_resource( Core::NotifierHandle notifier );
+  virtual void report_need_resource( const NotifierHandle& notifier );
   virtual Core::ActionSource source() const;
+
+public:
+  Core::NotifierHandle get_resource_notifier();
+  void reset_context();
+  Core::ActionResultHandle get_result();
+  std::string get_error_message();
 
 private:
   friend class PythonInterpreter;
