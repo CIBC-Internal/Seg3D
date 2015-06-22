@@ -138,6 +138,9 @@ ENDIF()
 INCLUDE( ${SUPERBUILD_DIR}/ITKExternal.cmake )
 LIST(APPEND Seg3D_DEPENDENCIES ITK_external)
 
+INCLUDE( ${SUPERBUILD_DIR}/VTKExternal.cmake )
+LIST(APPEND Seg3D_DEPENDENCIES VTK_external)
+
 INCLUDE( ${SUPERBUILD_DIR}/BoostExternal.cmake )
 LIST(APPEND Seg3D_DEPENDENCIES Boost_external)
 
@@ -166,6 +169,7 @@ SET(SEG3D_CACHE_ARGS
     "-DLibPNG_DIR:PATH=${LibPNG_DIR}"
     "-DSQLite_DIR:PATH=${SQLite_DIR}"
     "-DITK_DIR:PATH=${ITK_DIR}"
+    "-DVTK_DIR:PATH=${VTK_DIR}"
     "-DBoost_DIR:PATH=${Boost_DIR}"
     "-DFreetype_DIR:PATH=${Freetype_DIR}"
     "-DGlew_DIR:PATH=${Glew_DIR}"
