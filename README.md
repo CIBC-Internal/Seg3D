@@ -19,16 +19,16 @@ Table of Contents
 <!-- Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc) -->
 
 # Seg3D
-Seg3D is a free volume segmentation and processing tool developed by the NIH Center for Integrative Biomedical Computing at the University of Utah Scientific Computing and Imaging (SCI) Institute.
+Seg3D (www.seg3d.org) is a free volume segmentation and processing tool developed by the NIH Center for Integrative Biomedical Computing at the University of Utah Scientific Computing and Imaging (SCI) Institute.
+See the Seg3D site (www.seg3d.org) for detailed information about the software and platform support.
 
 This fork of the Seg3D repo is for experimenting with a VTK-based multiscale renderer.
-
 
 ## Installing Seg3D from source
 
 ### Compiler Requirements
 
-**C++11 compiler support is required.**
+**C++11 64-bit compiler support is required.**
 
 #### Windows Vista, 7, 8
 
