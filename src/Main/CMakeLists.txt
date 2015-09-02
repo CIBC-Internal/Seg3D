@@ -39,7 +39,6 @@ SET(MAIN_SRCS
 ###########################################
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SEG3D_BINARY_DIR})
-
 ADD_DEFINITIONS(-DAPPLICATION_NAME=${APPLICATION_NAME})
 
 IF(APPLE)
@@ -114,55 +113,35 @@ REGISTERED_TARGET_LINK_LIBRARIES(${APPLICATION_NAME})
 ###########################################
 
 IF(APPLE)
-  IF(${CMAKE_GENERATOR} MATCHES "Xcode")
-
-    #ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
-    #   POST_BUILD
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || cp -rf "${QT_QTCORE_LIBRARY_RELEASE}/Versions/4/QtCore" "${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/"
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || cp -rf "${QT_QTGUI_LIBRARY_RELEASE}/Versions/4/QtGui" "${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/"
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || cp -rf "${QT_QTOPENGL_LIBRARY_RELEASE}/Versions/4/QtOpenGL" "${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/"
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -id QtCore ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/QtCore
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -id QtGui ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/QtGui
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -id QtOpenGL ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/QtOpenGL
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -change QtCore.framework/Versions/4/QtCore @executable_path/QtCore ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/QtGui
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -change QtCore.framework/Versions/4/QtCore @executable_path/QtCore ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/QtOpenGL
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -change QtGui.framework/Versions/4/QtGui @executable_path/QtGui ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/QtOpenGL
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -change QtGui.framework/Versions/4/QtGui @executable_path/QtGui ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/${APPLICATION_NAME}
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -change QtCore.framework/Versions/4/QtCore @executable_path/QtCore ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/${APPLICATION_NAME}
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || install_name_tool -change QtOpenGL.framework/Versions/4/QtOpenGL @executable_path/QtOpenGL ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/${APPLICATION_NAME}
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || cp "-rf" "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" "${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents"
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || [ -d ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/plugins ] || mkdir ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/plugins
-    #   COMMAND [ ! -d ${CMAKE_CFG_INTDIR} ] || cp -rf "${CMAKE_SOURCE_DIR}/CMake/qt.conf" ${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/Resources
-    #   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
-    #IF(BUILD_WITH_PYTHON)
-    #  ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
-    #    POST_BUILD
-    #    COMMAND [ ! -d "${CMAKE_CFG_INTDIR}/lib" ] || cp -rf "${CMAKE_CFG_INTDIR}/lib" "${CMAKE_CFG_INTDIR}/${APPLICATION_NAME}.app/Contents/MacOS/"
-    #    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    #ENDIF()
-  ELSE()
-    ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
-       POST_BUILD
-       # configure Qt libs
-      #COMMAND echo "${MACDEPLOYQT} ${APPLICATION_NAME}.app -verbose=3"
-       COMMAND ${MACDEPLOYQT} ${APPLICATION_NAME}.app -verbose=3
-       WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
-    IF(BUILD_WITH_PYTHON)
-      SET(VERSION_PATH Versions/${SCI_PYTHON_VERSION_SHORT})
-      SET(FRAMEWORK_PATH Frameworks/Python.framework)
-      SET(PYTHON_PATH ${APPLICATION_NAME}.app/Contents/${FRAMEWORK_PATH}/${VERSION_PATH})
+  ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
+    POST_BUILD
+    # configure Qt libs
+    COMMAND ${MACDEPLOYQT} ${APPLICATION_NAME}.app -verbose=${MACDEPLOYQT_OUTPUT_LEVEL}
+    WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
+  IF(BUILD_WITH_PYTHON)
+    SET(VERSION_PATH Versions/${SCI_PYTHON_VERSION_SHORT})
+    SET(FRAMEWORK_PATH Frameworks/Python.framework)
+    SET(PYTHON_PATH ${APPLICATION_NAME}.app/Contents/${FRAMEWORK_PATH}/${VERSION_PATH})
       ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
-        POST_BUILD
-        # macdeployqt puts frameworks in app/Content/Frameworks
-        COMMAND ${CMAKE_COMMAND} ARGS -E chdir  ${APPLICATION_NAME}.app/Contents/Frameworks tar xvf ${SCI_PYTHON_FRAMEWORK_ARCHIVE}
-        COMMAND chmod u+w  ${PYTHON_PATH}/Python
-        COMMAND  install_name_tool -id Python ${PYTHON_PATH}/Python
-        COMMAND  install_name_tool -change ${SCI_PYTHON_FRAMEWORK}/${VERSION_PATH}/Python @executable_path/../${FRAMEWORK_PATH}/${VERSION_PATH}/Python ${APPLICATION_NAME}.app/Contents/MacOS/${APPLICATION_NAME}
-        # TODO: other executables...
-        COMMAND  install_name_tool -change ${SCI_PYTHON_FRAMEWORK}/${VERSION_PATH}/Python @executable_path/../Python ${PYTHON_PATH}/bin/python${SCI_PYTHON_VERSION_SHORT}
-        WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
-    ENDIF()
+      POST_BUILD
+      # macdeployqt puts frameworks in app/Content/Frameworks
+      COMMAND ${CMAKE_COMMAND} ARGS -E chdir  ${APPLICATION_NAME}.app/Contents/Frameworks tar xf ${SCI_PYTHON_FRAMEWORK_ARCHIVE}
+      COMMAND chmod u+w  ${PYTHON_PATH}/Python
+      COMMAND  install_name_tool -id Python ${PYTHON_PATH}/Python
+      COMMAND  install_name_tool -change ${SCI_PYTHON_FRAMEWORK}/${VERSION_PATH}/Python @executable_path/../${FRAMEWORK_PATH}/${VERSION_PATH}/Python ${APPLICATION_NAME}.app/Contents/MacOS/${APPLICATION_NAME}
+      # TODO: other executables...
+      COMMAND  install_name_tool -change ${SCI_PYTHON_FRAMEWORK}/${VERSION_PATH}/Python @executable_path/../Python ${PYTHON_PATH}/bin/python${SCI_PYTHON_VERSION_SHORT}
+      WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
+  ENDIF()
+ELSEIF(WIN32)
+  IF(BUILD_WITH_PYTHON)
+    # TODO: change $<CONFIGURATION> to $<CONFIG> when upgrading to cmake 3
+    # TODO: copy python dll
+    ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E make_directory $<CONFIGURATION>/${PYTHON_MODULE_SEARCH_PATH}
+      COMMAND ${CMAKE_COMMAND} ARGS -E copy_directory ${SCI_PYTHON_MODULE_LIBRARY_PATH} $<CONFIGURATION>/${PYTHON_MODULE_SEARCH_PATH}
+      WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
   ENDIF()
 ELSE()
   IF(BUILD_WITH_PYTHON)
@@ -171,6 +150,12 @@ ELSE()
       COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${PYTHON_MODULE_SEARCH_PATH}
       COMMAND ${CMAKE_COMMAND} ARGS -E copy_directory ${SCI_PYTHON_MODULE_LIBRARY_PATH} ${PYTHON_MODULE_SEARCH_PATH}
       WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
+    IF(SCI_PYTHON_64BIT_MODULE_LIBRARY_PATH AND EXISTS ${SCI_PYTHON_64BIT_MODULE_LIBRARY_PATH})
+      ADD_CUSTOM_COMMAND(TARGET ${APPLICATION_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} ARGS -E copy_directory  ${SCI_PYTHON_64BIT_MODULE_LIBRARY_PATH} ${PYTHON_MODULE_SEARCH_PATH}
+        WORKING_DIRECTORY ${SEG3D_BINARY_DIR})
+    ENDIF()
   ENDIF()
 ENDIF()
 
@@ -203,7 +188,7 @@ ELSE()
 
     IF(BUILD_WITH_PYTHON)
       INSTALL(PROGRAMS
-        ${SCI_PYTHON_LIBRARY_PATH}
+        ${SCI_PYTHON_DLL_PATH}
         DESTINATION bin
       )
 
@@ -212,32 +197,32 @@ ELSE()
         DESTINATION bin/${PYTHON_MODULE_SEARCH_PATH}
       )
     ENDIF()
-  ELSE()
-    INSTALL(TARGETS ${APPLICATION_NAME}
-      RUNTIME DESTINATION bin
-    )
-
-    INSTALL(FILES
-      ${QT_QTCORE_LIBRARY_RELEASE}.${QT_VERSION}
-      ${QT_QTGUI_LIBRARY_RELEASE}.${QT_VERSION}
-      ${QT_QTOPENGL_LIBRARY_RELEASE}.${QT_VERSION}
-      DESTINATION lib
-    )
-
-    INSTALL(FILES
-      ${CMAKE_SOURCE_DIR}/ReleaseNotes.txt
-      DESTINATION bin
-    )
-
-    IF(BUILD_WITH_PYTHON)
-      INSTALL(FILES
-        ${SCI_PYTHON_LIBRARY_PATH}
-        DESTINATION bin
-      )
-      INSTALL(DIRECTORY
-        ${SCI_PYTHON_MODULE_LIBRARY_PATH}
-        DESTINATION bin/${PYTHON_MODULE_SEARCH_PATH}
-      )
-    ENDIF()
+#  ELSE()
+#    INSTALL(TARGETS ${APPLICATION_NAME}
+#      RUNTIME DESTINATION bin
+#    )
+#
+#    INSTALL(FILES
+#      ${QT_QTCORE_LIBRARY_RELEASE}.${QT_VERSION}
+#      ${QT_QTGUI_LIBRARY_RELEASE}.${QT_VERSION}
+#      ${QT_QTOPENGL_LIBRARY_RELEASE}.${QT_VERSION}
+#      DESTINATION lib
+#    )
+#
+#    INSTALL(FILES
+#      ${CMAKE_SOURCE_DIR}/ReleaseNotes.txt
+#      DESTINATION bin
+#    )
+#
+#    IF(BUILD_WITH_PYTHON)
+#      INSTALL(FILES
+#        ${SCI_PYTHON_DLL_PATH}
+#        DESTINATION bin
+#      )
+#      INSTALL(DIRECTORY
+#        ${SCI_PYTHON_MODULE_LIBRARY_PATH}
+#        DESTINATION bin/${PYTHON_MODULE_SEARCH_PATH}
+#      )
+#    ENDIF()
   ENDIF()
 ENDIF()
