@@ -47,10 +47,14 @@ SET(vtk_ARGS
   "-DVTK_Group_Qt:BOOL=OFF"
   "-DModule_vtkGUISupportQt:BOOL=ON"
   "-DModule_vtkGUISupportQtOpenGL:BOOL=ON"
+  "-DVTK_USE_SYSTEM_FREETYPE:BOOL=ON"
+  "-DFREETYPE_INCLUDE_DIR_freetype2:PATH=${Freetype_DIR}/include/freetype2"
+  "-DFREETYPE_INCLUDE_DIR_ft2build:PATH=${Freetype_SOURCE_DIR}/include"
+  "-DFREETYPE_LIBRARY:FILEPATH=${Freetype_LIB_PATH}"
 )
 
 SET(vtk_GIT_URL "https://gitlab.kitware.com/vtk/vtk.git")
-SET(vtk_GIT_TAG "origin/release")
+SET(vtk_GIT_TAG "v6.2.0")
 
 # If CMake ever allows overriding the checkout command or adding flags,
 # git checkout -q will silence message about detached head (harmless).

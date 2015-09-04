@@ -42,6 +42,16 @@ ExternalProject_Add(Freetype_external
 )
 
 ExternalProject_Get_Property(Freetype_external BINARY_DIR)
+ExternalProject_Get_Property(Freetype_external SOURCE_DIR)
+
+IF(UNIX)
+  SET(Freetype_LIB_PREFIX "lib")
+  SET(Freetype_LIB_PATH ${BINARY_DIR}/${Freetype_LIB_PREFIX}freetype${CMAKE_STATIC_LIBRARY_SUFFIX})
+ELSE()
+  SET(Freetype_LIB_PATH ${BINARY_DIR}/$<CONFIGURATION>/freetype${CMAKE_STATIC_LIBRARY_SUFFIX})
+ENDIF()
+
+SET(Freetype_SOURCE_DIR ${SOURCE_DIR})
 SET(Freetype_DIR ${BINARY_DIR} CACHE PATH "")
 
 MESSAGE(STATUS "Freetype_DIR: ${Freetype_DIR}")
