@@ -20,9 +20,7 @@ Table of Contents
 
 # Seg3D
 Seg3D (www.seg3d.org) is a free volume segmentation and processing tool developed by the NIH Center for Integrative Biomedical Computing at the University of Utah Scientific Computing and Imaging (SCI) Institute.
-
 See the Seg3D site (www.seg3d.org) for detailed information about the software, platform support and documentation.
-
 This fork of the Seg3D repo is for experimenting with a VTK-based multiscale renderer.
 
 ## Installing Seg3D from source
