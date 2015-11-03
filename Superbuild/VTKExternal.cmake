@@ -53,6 +53,11 @@ SET(vtk_ARGS
   "-DFREETYPE_LIBRARY:FILEPATH=${Freetype_LIB_PATH}"
 )
 
+SET(vtk_CACHE_ARGS
+  "-DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}"
+  "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
+)
+
 SET(vtk_GIT_URL "https://gitlab.kitware.com/vtk/vtk.git")
 SET(vtk_GIT_TAG "v6.2.0")
 
@@ -65,6 +70,7 @@ ExternalProject_Add(VTK_external
   INSTALL_DIR ""
   INSTALL_COMMAND ""
   CMAKE_ARGS ${vtk_ARGS}
+  CMAKE_CACHE_ARGS ${vtk_CACHE_ARGS}
 )
 
 ExternalProject_Get_Property(VTK_external BINARY_DIR)

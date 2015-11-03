@@ -631,9 +631,19 @@ QComboBox::icon{
                    </iconset>
                   </property>
                  </item>
-                </widget>
+                  <item>
+                  <property name="text">
+                   <string notr="true">VTK</string>
+                  </property>
+                  <property name="icon">
+                   <iconset>
+                    <normalon>:/Images/VVTKview.png</normalon>
+                   </iconset>
+                  </property>
+                 </item>
+               </widget>
                </item>
-              </layout>
+             </layout>
              </widget>
             </item>
             <item>

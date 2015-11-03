@@ -4,6 +4,7 @@
         <file>Images/IsosurfaceMenu.png</file>
         <file>Images/IsosurfaceMenuOff.png</file>
         <file>Images/VviewOff.png</file>
+        <file>Images/VVTKviewOff.png</file>
         <file>Images/XviewOff.png</file>
         <file>Images/YviewOff.png</file>
         <file>Images/ZviewOff.png</file>
@@ -125,6 +126,7 @@
         <file>Images/VolumeVisible.png</file>
         <file>Images/VolumeVisibleOff.png</file>
         <file>Images/Vview.png</file>
+        <file>Images/VVTKview.png</file>
         <file>Images/World.png</file>
         <file>Images/WorldOff.png</file>
         <file>Images/Xview.png</file>

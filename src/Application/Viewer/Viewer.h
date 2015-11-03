@@ -262,6 +262,7 @@ public:
   Core::StateView2DHandle coronal_view_state_;
   Core::StateView2DHandle sagittal_view_state_;
   Core::StateView3DHandle volume_view_state_;
+  Core::StateView3DHandle vtk_volume_view_state_;
   Core::StateRangedIntHandle slice_number_state_;
 
   /// Whether to flip the 2D view horizontally
@@ -293,6 +294,7 @@ public:
   const static std::string SAGITTAL_C;
   const static std::string CORONAL_C;
   const static std::string VOLUME_C;
+  const static std::string VTK_VOLUME_C;
 
 private:
   ViewerPrivateHandle private_;

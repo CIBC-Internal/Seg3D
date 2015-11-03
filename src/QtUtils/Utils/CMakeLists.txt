@@ -37,12 +37,14 @@ SET(QTUTILS_UTILS_SRCS
   QtRenderResources.cc
   QtRenderWidget.cc
   QtTransferFunctionWidget.cc
+  QtVTKRenderWidget.cc
 )
 
 SET(QTUTILS_UTILS_MOC_SRCS
   QtEventHandler.h
   QtRenderWidget.h
   QtTransferFunctionWidget.h
+  QtVTKRenderWidget.h
 )
 
 SET(QTUTILS_UTILS_NO_MOC_SRCS
@@ -78,18 +80,21 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 ##################################################
 
 CORE_ADD_LIBRARY(QtUtils_Utils
-         ${QTUTILS_UTILS_SRCS} 
-         ${QTUTILS_UTILS_QT_UI_SRCS}
-         ${QTUTILS_UTILS_QT_MOC_SRCS}
-         ${QTUTILS_UTILS_MOC_SRCS}
-         ${QTUTILS_UTILS_NO_MOC_SRCS})
+  ${QTUTILS_UTILS_SRCS} 
+  ${QTUTILS_UTILS_QT_UI_SRCS}
+  ${QTUTILS_UTILS_QT_MOC_SRCS}
+  ${QTUTILS_UTILS_MOC_SRCS}
+  ${QTUTILS_UTILS_NO_MOC_SRCS}
+)
             
 TARGET_LINK_LIBRARIES(QtUtils_Utils 
-                      Core_Utils
-                      Core_EventHandler
-            Core_Graphics
-            Core_Viewer
-            QtUtils_Widgets
-                      ${QT_LIBRARIES} 
-                      ${SCI_GLEW_LIBRARY}
-                      ${SCI_BOOST_LIBRARY})
+  Core_Utils
+  Core_EventHandler
+  Core_Graphics
+  Core_Viewer
+  QtUtils_Widgets
+  ${VTK_LIBRARIES}
+  ${QT_LIBRARIES} 
+  ${SCI_GLEW_LIBRARY}
+  ${SCI_BOOST_LIBRARY}
+)

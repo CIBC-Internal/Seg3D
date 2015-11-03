@@ -59,6 +59,8 @@
 #include <Application/ViewerManager/ViewerManager.h>
 #include <Application/Layer/Actions/ActionComputeIsosurface.h>
 
+#include <sstream>
+
 namespace Seg3D
 {
 
@@ -68,9 +70,10 @@ CORE_ENUM_CLASS
   AXIAL_E = 0x1,
   CORONAL_E = 0x2,
   SAGITTAL_E = 0x4,
-  NON_VOLUME_E = AXIAL_E | CORONAL_E | SAGITTAL_E,
+  NON_VOLUME_E = AXIAL_E | CORONAL_E | SAGITTAL_E, // 0x7
   VOLUME_E = 0x8,
-  ALL_E = NON_VOLUME_E | VOLUME_E
+  VTK_VOLUME_E = 0x10,
+  ALL_E = NON_VOLUME_E | VOLUME_E | VTK_VOLUME_E // 0x1F
 )
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,7 +149,7 @@ public:
   Core::VolumeSliceHandle active_layer_slice_;
 
   // Indexed view state variables for quick access
-  Core::StateViewBaseHandle view_states_[ 4 ];
+  Core::StateViewBaseHandle view_states_[ 5 ];
 
   Viewer::mouse_event_handler_type mouse_move_handler_;
   Viewer::mouse_event_handler_type mouse_press_handler_;
@@ -1012,6 +1015,7 @@ const std::string Viewer::AXIAL_C( "axial" );
 const std::string Viewer::CORONAL_C( "coronal" );
 const std::string Viewer::SAGITTAL_C( "sagittal" );
 const std::string Viewer::VOLUME_C( "volume" );
+const std::string Viewer::VTK_VOLUME_C( "vtk" );
 
 Viewer::Viewer( size_t viewer_id, bool visible, const std::string& mode ) :
   Core::AbstractViewer(  viewer_id ),
@@ -1032,8 +1036,9 @@ Viewer::Viewer( size_t viewer_id, bool visible, const std::string& mode ) :
   // Indicate that this statehandler contains data that is part of the project
   //this->mark_as_project_data();
 
-  this->add_state( "view_mode", view_mode_state_, mode, sagittal + "|" + coronal 
-     + "|" + axial + "|" + VOLUME_C + "=Volume" );
+  std::ostringstream options;
+  options << sagittal << "|" << coronal << "|" << axial << "|" << VOLUME_C << "=Volume|" + VTK_VOLUME_C + "=Volume";
+  this->add_state( "view_mode", view_mode_state_, mode,  options.str() );
   this->view_mode_state_->set_session_priority( Core::StateBase::DEFAULT_LOAD_E + 1 );
      
   this->add_connection( PreferencesManager::Instance()->x_axis_label_state_->state_changed_signal_.
@@ -1063,6 +1068,7 @@ Viewer::Viewer( size_t viewer_id, bool visible, const std::string& mode ) :
   this->add_state( "coronal_view", coronal_view_state_ );
   this->add_state( "sagittal_view", sagittal_view_state_ );
   this->add_state( "volume_view", volume_view_state_ );
+  this->add_state( "vtk_volume_view", vtk_volume_view_state_ );
 
   this->add_state( "flip_horizontal", this->flip_horizontal_state_, false );
   this->flip_horizontal_state_->set_session_priority( Core::StateBase::DO_NOT_LOAD_E );
@@ -1078,6 +1084,7 @@ Viewer::Viewer( size_t viewer_id, bool visible, const std::string& mode ) :
   this->private_->view_states_[ 1 ] = this->coronal_view_state_;
   this->private_->view_states_[ 2 ] = this->axial_view_state_;
   this->private_->view_states_[ 3 ] = this->volume_view_state_;
+  this->private_->view_states_[ 4 ] = this->vtk_volume_view_state_;
 
   this->add_state( "slice_number", this->slice_number_state_, 0, 0, 0, 1 );
   this->slice_number_state_->set_session_priority( Core::StateBase::DO_NOT_LOAD_E );
@@ -1136,7 +1143,9 @@ Viewer::Viewer( size_t viewer_id, bool visible, const std::string& mode ) :
     boost::bind( &Viewer::redraw_all, this ) ) );
   this->add_connection( this->volume_view_state_->state_changed_signal_.connect(
     boost::bind( &Viewer::redraw_all, this ) ) );
-    
+  this->add_connection( this->vtk_volume_view_state_->state_changed_signal_.connect(
+    boost::bind( &Viewer::redraw_all, this ) ) );
+
   // Connect state variables that should trigger redraw_scene.
   this->add_connection( this->volume_light_visible_state_->state_changed_signal_.connect(
     boost::bind( &Viewer::redraw_scene, this ) ) );

@@ -47,6 +47,7 @@
 #include <QtUtils/Bridge/QtBridge.h>
 #include <QtUtils/Utils/QtRenderResources.h>
 #include <QtUtils/Utils/QtRenderWidget.h>
+#include <QtUtils/Utils/QtVTKRenderWidget.h>
 
 // Interface includes
 #include <Interface/Application/StyleSheet.h>
@@ -69,6 +70,7 @@ public:
 
   Ui::ViewerWidget ui_;
   QtUtils::QtRenderWidget* render_widget_;
+  QtUtils::QtVTKRenderWidget* vtk_render_widget_;
 
   int minimum_toolbar_width_; 
   bool initialized_size_;
@@ -168,7 +170,15 @@ ViewerWidget::ViewerWidget( ViewerHandle viewer, QWidget *parent ) :
   
   this->private_->render_widget_->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
   this->private_->ui_.viewer_layout_->addWidget( this->private_->render_widget_ );
-  
+
+// test
+  this->private_->vtk_render_widget_ = new QtUtils::QtVTKRenderWidget(QGLFormat::defaultFormat(), this, new QGLWidget( QGLFormat::defaultFormat() ), this->private_->viewer_);
+  if ( this->private_->vtk_render_widget_ == 0 )
+  {
+    CORE_THROW_LOGICERROR("VTK Qt widget was not initialized correctly");
+  }
+// test
+
   // Update state of the widget to reflect current state
   {
     Core::StateEngine::lock_type lock( Core::StateEngine::GetMutex() );
